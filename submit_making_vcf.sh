@@ -6,7 +6,7 @@ target_pops=("YRI" "CEU" "CHB" "BEB")
 # Create SLURM job scripts for each population
 for pop in ${target_pops[@]}
 do
-  job_script="/home/tx56/ycga_work/1kgp_vcf/extract_${pop}.sh"
+  job_script="/home/tx56/palmer_scratch/deepsweep_empirical/1kgp_vcf/extract_${pop}.sh"
   cat <<EOT > $job_script
 #!/bin/bash
 #SBATCH --partition=ycga
@@ -20,13 +20,13 @@ do
 for i in {1..22}
 do
   vcftools --gzvcf /home/tx56/1KGP/ALL.chr\${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz \
-           --keep /home/tx56/ycga_work/empirical/pop_files/${pop}.txt \
+           --keep /home/tx56/palmer_scratch/deepsweep_empirical/empirical/pop_files/${pop}.txt \
            --recode \
            --recode-INFO-all \
            --maf 0.05 \
            --min-alleles 2 \
            --max-alleles 2 \
-           --out /home/tx56/ycga_work/1kgp_vcf/${pop}.chr\${i}
+           --out /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_vcf/${pop}.chr\${i}
 done
 EOT
   # Submit the job

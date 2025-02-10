@@ -1,0 +1,61 @@
+target_pops=("YRI" "CEU" "CHB" "BEB")
+
+$ head ../1kgp_daf/BEB.22.AA.tsv 
+pos	daf	deldaf	maf
+16143946	0.7733	0.1666	0.2267
+16155304	0.5058	0.434	0.4942
+
+files are ../1kgp_daf/{pop}.{i}.AA.tsv
+
+outer join other columns to {pop}.{i}.AA.tsv and save to ../outputs/{pop}.{i}.empirical.tsv, for missing values giving NA
+
+$ head ../1kgp_fst/CHB.BEB.ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.weir.fst 
+CHROM	POS	WEIR_AND_COCKERHAM_FST
+22	16050075	-nan
+22	16050115	-nan
+22	16050213	-nan
+
+files are ../1kgp_fst/{pop_pair}.ALL.chr{i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.weir.fst
+there are 6 pop pair: YRI.CEU YRI.CHB YRI.BEB CEU.CHB CEU.BEB CHB.BEB
+inner join each 3 set of pop pairs that have a mutual pop, such as YRI.CEU YRI.CHB YRI.BEB for the same chr{i}
+remove nan rows and compute mean_fst=mean of three WEIR_AND_COCKERHAM_FST columns, then outer join mean_fst by POS=pos in ../outputs/{pop}.{i}.empirical.tsv that {pop} is the only mutual pop in the pairs
+for example, YRI.CEU YRI.CHB YRI.BEB of chr1 will add a  mean_fst to ../outputs/YRI.1.empirical.tsv
+YRI.BEB CEU.BEB CHB.BEB of chr2 will add a  mean_fst to ../outputs/BEB.2.empirical.tsv
+YRI.CHB CEU.CHB CHB.BEB of chr10 will add a  mean_fst to ../outputs/CHB.10.empirical.tsv
+
+next outer join files ../normed/norm_ihh12_{pop}_{i}.tsv by pos, add rsid=id,norm_ihh12=norm_ihh12 to ../outputs/{pop}.{i}.empirical.tsv, for missing values giving NA
+
+$ head ../normed/norm_ihh12_BEB_19.tsv 
+id	pos	p1	ihh12	norm_ihh12
+rs10420072	290090	0.575581	0.0101703	0.3866
+rs12979151	290470	0.523256	0.0159881	1.3711
+
+next outer join files ../normed/norm_delihh_{pop}_{i}.tsv by pos, also merge with rsid=ID,add norm_ihs=norm_iHS,norm_delihh=norm_delihh to ../outputs/{pop}.{i}.empirical.tsv, for missing values giving NA
+
+$ head ../normed/norm_delihh_BEB_22.tsv
+Index	ID	Freq	iHH_0	iHH_1	iHS	Std_iHS	norm_iHS	delihh	norm_delihh
+26	rs117899989	0.860465	0.00931848	0.0211165	-0.818056	-1.6537	-1.0689	0.01179802	0.428
+28	rs2226535	0.744186	0.0116652	0.0239541	-0.719527	-0.185859	0.0883	0.0122889	-0.0358
+33	rs568628387	0.866279	0.0103143	0.016503	-0.470009	-1.04065	-0.4664	0.0061887	0.0285
+
+next outer join files ../normed/norm_ihh12_{pop}_{i}.tsv by pos, also merge with rsid=rs,add norm_nsl=norm_nsl to ../outputs/{pop}.{i}.empirical.tsv, for missing values giving NA
+
+$ head ../normed/norm_nsl_BEB_3.tsv 
+rs	pos	daf	sl1	sl0	nsl	norm_nsl
+rs9841287	108993	0.651163	19.9583	17.8195	0.0492272	-1.2485
+rs533821976	109414	0.726744	19.3263	11.5564	0.223326	-0.09
+rs73011294	109482	0.947674	13.7518	16.2083	-0.07138	-0.5079
+
+next read files ../normed/norm_XPEHH_{pop}_*_{i}.tsv 
+inner join the same i by ID, make a new column max_xpehh=max{norm_XPEHH columns}
+
+then outer join by rsid=ID, add max_xpehh=max_xpehh to ../outputs/{pop}.{i}.empirical.tsv, for missing values giving NA
+
+$ head ../normed/norm_XPEHH_BEB_CEU_22.tsv
+Index	ID	Freq	iHH_A1	iHH_B1	iHH_P1	XPEHH	Std_XPEHH	norm_XPEHH
+41	rs11089179	0.6	0.00768771	0.0100158	0.00708849	-0.264541	-0.374664	-0.3415
+42	rs4819454	0.827027	0.00797076	0.0133475	0.00882485	-0.515548	-0.909974	-0.6982
+
+so the final output will have columns as 
+pos	rsid mean_fst	deldaf	daf	maf norm_ihs	norm_nsl	norm_ihh12	norm_delihh	max_xpehh
+

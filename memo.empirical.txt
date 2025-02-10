@@ -1,0 +1,30 @@
+
+selscan --ihs --ihs-detail --vcf /home/tx56/ycga_work/1kgp_vcf/${pop}.chr${i} --out /home/tx56/ycga_work/ --threads 8
+
+also write script submit 4 jobs to extract vcf files for the 4 populations
+/home/tx56/1KGP/ALL.chr{1..22}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz --out /home/tx56/ycga_work/1kgp_vcf/${pop}.chr${i}
+
+
+selscan --ihs --ihs-detail --vcf /home/tx56/ycga_work/1kgp_vcf/CEU.chr22.recode.vcf --map /home/tx56/ycga_work/1kgp_map/CEU.chr22.map --out /home/tx56/ycga_work/1kgp_ihs/CEU.chr22 --thread 8
+
+selscan --ihh12 --vcf /home/tx56/ycga_work/1kgp_vcf/CEU.chr22.recode.vcf --map /home/tx56/ycga_work/1kgp_map/CEU.chr22.map --out /home/tx56/ycga_work/1kgp_ihh12/CEU.chr22 --thread 8
+
+selscan --xpehh --alt --vcf /home/tx56/ycga_work/1kgp_vcf/CEU.chr22.recode.vcf --vcf-ref /home/tx56/ycga_work/1kgp_vcf/CHB.chr22.recode.vcf --map /home/tx56/ycga_work/1kgp_map/CEU.chr22.map --out /home/tx56/ycga_work/1kgp_xpehh/CEU_CHB.chr22 
+
+vcftools --vcf /home/tx56/ycga_work/1kgp_vcf/${pop}.chr${i}.recode.vcf --IMPUTE --out /home/tx56/ycga_work/1kgp_hap/${pop}.chr${i}
+
+vcftools --vcf /home/tx56/ycga_work/1kgp_vcf/CEU.chr22.recode.vcf --IMPUTE --out /home/tx56/ycga_work/1kgp_hap/CEU.chr22
+
+selscan --ihs --ihs-detail --vcf /home/tx56/ycga_work/1kgp_hap/BEB.chr22.impute.hap --map /home/tx56/ycga_work/1kgp_hap/BEB.chr22.map --out /home/tx56/ycga_work/1kgp_ihs/BEB.chr22 
+#
+vcftools --vcf /home/tx56/ycga_work/1kgp_hap/BEB.chr22.joint.recode.vcf --plink --out /home/tx56/ycga_work/1kgp_hap/BEB.chr22
+#
+plink --file /home/tx56/ycga_work/1kgp_hap/BEB.chr22 --recode 01 transpose --out /home/tx56/ycga_work/1kgp_hap/BEB.chr22 --output-missing-genotype 1
+#
+selscan --ihs --ihs-detail --alt --tped /home/tx56/ycga_work/1kgp_hap/BEB.chr22.tped --out /home/tx56/ycga_work/1kgp_ihs/BEB.chr22
+#
+/home/tx56/hapbin/build/ihsbin --hap /home/tx56/ycga_work/1kgp_ihs/BEB.22.hap --map /home/tx56/ycga_work/1kgp_ihs/BEB.22.map --out /home/tx56/ycga_work/1kgp_ihs/BEB.22.ihs
+
+/home/tx56/hapbin/build/xpehhbin --hapA /home/tx56/ycga_work/1kgp_joint/BEB.22.joint.hap --hapB /home/tx56/ycga_work/1kgp_joint/CHB.22.joint.hap --map /home/tx56/ycga_work/1kgp_joint/BEB.22.joint.map --out /home/tx56/ycga_work/1kgp_xpehh/BEB_CHB.22.xpehh
+
+

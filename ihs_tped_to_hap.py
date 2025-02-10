@@ -29,19 +29,19 @@ def create_map_file(original_map_file):
 
 def main():
     target_pops = ["YRI", "CEU", "CHB", "BEB"]
-    path = "/home/tx56/ycga_work/1kgp_tped"
+    path = "/home/tx56/palmer_scratch/deepsweep_empirical/1kgp_AA_tped"
 
     for pop in target_pops:
         for i in range(1, 23):
-            input_file = f"{path}/{pop}.{i}.tped"
+            input_file = f"{path}/{pop}.{i}.AA.tped"
             
             if not os.path.exists(input_file):
                 print(f"Skipping {pop} chromosome {i} as {input_file} does not exist.")
                 continue
 
-            os.makedirs("hapbin", exist_ok=True)
-            output_file_hap = f"/home/tx56/ycga_work/1kgp_ihs/{pop}.{i}.hap"
-            output_file_map = f"/home/tx56/ycga_work/1kgp_ihs/{pop}.{i}.map"
+            os.makedirs("/home/tx56/palmer_scratch/deepsweep_empirical/1kgp_ihs", exist_ok=True)
+            output_file_hap = f"/home/tx56/palmer_scratch/deepsweep_empirical/1kgp_ihs/{pop}.{i}.hap"
+            output_file_map = f"/home/tx56/palmer_scratch/deepsweep_empirical/1kgp_ihs/{pop}.{i}.map"
             extract_and_clean_columns(input_file, output_file_map, output_file_hap)
             print(f"Extracted columns saved to {output_file_map} and {output_file_hap}")
             create_map_file(output_file_map)

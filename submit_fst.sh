@@ -4,7 +4,7 @@
 panel_file="/home/tx56/1KGP/integrated_call_samples_v3.20130502.ALL.panel"
 
 # Create a directory to store the population files
-mkdir -p /home/tx56/ycga_work/empirical/pop_files
+mkdir -p /home/tx56/palmer_scratch/deepsweep_empirical/pop_files
 
 # Extract unique populations
 populations=$(cut -f2 $panel_file | tail -n +2 | sort | uniq)
@@ -12,7 +12,7 @@ populations=$(cut -f2 $panel_file | tail -n +2 | sort | uniq)
 # Generate .txt files for each population
 for pop in $populations
 do
-  grep -w $pop $panel_file | cut -f1 > /home/tx56/ycga_work/empirical/pop_files/${pop}.txt
+  grep -w $pop $panel_file | cut -f1 > /home/tx56/palmer_scratch/deepsweep_empirical/pop_files/${pop}.txt
 done
 
 # List of populations to compare
@@ -28,7 +28,7 @@ do
       pop_a=${target_pops[$i]}
       pop_b=${target_pops[$j]}
       job_count=$((job_count + 1))
-      job_script="/home/tx56/ycga_work/empirical/job_${job_count}.sh"
+      job_script="/home/tx56/palmer_scratch/deepsweep_empirical/job_${job_count}.sh"
       cat <<EOT > $job_script
 #!/bin/bash
 #SBATCH --partition=week
@@ -42,9 +42,9 @@ do
 for vcf_file in /home/tx56/1KGP/ALL.chr{1..22}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
 do
   vcftools --gzvcf \$vcf_file \
-           --weir-fst-pop /home/tx56/ycga_work/empirical/pop_files/${pop_a}.txt \
-           --weir-fst-pop /home/tx56/ycga_work/empirical/pop_files/${pop_b}.txt \
-           --out /home/tx56/ycga_work/1kgp_fst/${pop_a}.${pop_b}.\$(basename \$vcf_file .vcf.gz)
+           --weir-fst-pop /home/tx56/palmer_scratch/deepsweep_empirical/pop_files/${pop_a}.txt \
+           --weir-fst-pop /home/tx56/palmer_scratch/deepsweep_empirical/pop_files/${pop_b}.txt \
+           --out /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_fst/${pop_a}.${pop_b}.\$(basename \$vcf_file .vcf.gz)
 done
 EOT
       # Submit the job

@@ -6,9 +6,6 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=8000
 
-# Run the Python script to convert TPED to HAP
-#python ihs_tped_to_hap.py
-
 # List of populations to run selscan
 target_pops=("YRI" "CEU" "CHB" "BEB")
 
@@ -17,6 +14,6 @@ for pop in ${target_pops[@]}
 do
   for i in {1..22}
   do
-    /home/tx56/hapbin/build/ihsbin --hap /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_ihs/${pop}.${i}.hap --map /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_ihs/${pop}.${i}.map --out /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_ihs/${pop}.${i}.ihs
+    plink --file /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_map/${pop}.chr${i} --make-bed --biallelic-only --exclude /home/tx56/1KGP/exclude_rsid.txt --out /home/tx56/palmer_scratch/deepsweep_empirical/1kgp_bfile/${pop}.${i}
   done
 done
